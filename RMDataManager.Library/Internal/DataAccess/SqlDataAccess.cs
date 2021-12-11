@@ -26,7 +26,7 @@ namespace RMDataManager.Library
                     .AsList();
             }
         } 
-        public void SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
+        public void SaveData(string storedProcedure, object parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
             using(IDbConnection connection = new SqlConnection(connectionString))

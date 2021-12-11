@@ -14,5 +14,10 @@ namespace RMDataManager.Library.DataAccess
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
             return sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetAll", new { }, "RMData");
         }
+        public ProductModel GetProductById(int id)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+            return sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetById", new { Id = id }, "RMData").FirstOrDefault();
+        }
     }
 }
