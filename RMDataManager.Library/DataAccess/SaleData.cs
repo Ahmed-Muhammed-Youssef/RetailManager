@@ -37,25 +37,34 @@ namespace RMDataManager.Library.DataAccess
 
             //save sale  model
 
-            SqlDataAccess sqlDataAccess = new SqlDataAccess();
-            sqlDataAccess.SaveData("dbo.spSalesInsert", new { saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax }, "RMData");
-
-            //Get The ID From the sale model
-            saleModel.Id = sqlDataAccess.LoadData<int>("dbo.spSalesLookup",
-                new {saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total }, "RMData")
-                .FirstOrDefault();
-            //fill the list of  sale models
-            foreach (var item in saleDetailModels)
+            using (SqlDataAccess sqlDataAccess = new SqlDataAccess()) 
             {
-                item.SaleId = saleModel.Id;
+                try
+                {
+                    sqlDataAccess.OpenTransaction("RMData");
+                
+                    sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
+            
+                    //Get The ID From the sale model
+                    saleModel.Id = sqlDataAccess.LoadDataInTransaction<int>("dbo.spSalesLookup",
+                        new {saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total })
+                        .FirstOrDefault();
+
+                    //save  the  sale detail models
+                    foreach (var item in saleDetailModels)
+                    {
+                        item.SaleId = saleModel.Id;
+                        sqlDataAccess.SaveDataInTransaction("dbo.spSalesDetailsInsert", 
+                            new { item.SaleId, item.ProductId, item.Quantity, item.PurchasePrice, item.Tax });
+                    }
+                }
+                catch
+                {
+                    sqlDataAccess.RollbackTransasction();
+                    throw;
+                }
             }
 
-            //save  the  sale detail models
-            foreach (var item in saleDetailModels)
-            {
-                sqlDataAccess.SaveData("dbo.spSalesDetailsInsert", 
-                    new { item.SaleId, item.ProductId, item.Quantity, item.PurchasePrice, item.Tax }, "RMData");
-            }
 
         }
     }
