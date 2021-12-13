@@ -43,11 +43,11 @@ namespace RMDataManager.Library.DataAccess
                 {
                     sqlDataAccess.OpenTransaction("RMData");
                 
-                    sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
-            
+                    sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Id, saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
+
                     //Get The ID From the sale model
                     saleModel.Id = sqlDataAccess.LoadDataInTransaction<int>("dbo.spSalesLookup",
-                        new {saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total })
+                        new { saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total })
                         .FirstOrDefault();
 
                     //save  the  sale detail models
