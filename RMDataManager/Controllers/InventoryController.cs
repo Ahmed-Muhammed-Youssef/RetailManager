@@ -13,7 +13,7 @@ namespace RMDataManager.Controllers
     [Authorize]
     public class InventoryController : ApiController
     {
-
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("Inventories")]
         public List<InventoryModel> Get()
@@ -21,6 +21,7 @@ namespace RMDataManager.Controllers
             InventoryData inventoryData = new InventoryData();
             return inventoryData.GetInventory();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("InsertInventory")]
         public IHttpActionResult Post(InventoryModel item)

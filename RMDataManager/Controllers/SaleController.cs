@@ -16,6 +16,7 @@ namespace RMDataManager.Controllers
     public class SaleController : ApiController
     {
         // POST api/Sales
+        [Authorize(Roles ="Cashier")]
         [HttpPost]
         public IHttpActionResult Post(IEnumerable<SaleModelReceived> salelModelsReceived)
         {
@@ -41,6 +42,7 @@ namespace RMDataManager.Controllers
             return Ok();
         }
         // GET api/Sales/SalesReport
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("SalesReport")]
         public List<SaleReportModel> GetSaleReport()
