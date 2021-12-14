@@ -12,8 +12,10 @@ using System.Web.Http;
 namespace RMDataManager.Controllers
 {
     [Authorize]
+    [RoutePrefix("api/Sales")]
     public class SaleController : ApiController
     {
+        // POST api/Sales
         [HttpPost]
         public IHttpActionResult Post(IEnumerable<SaleModelReceived> salelModelsReceived)
         {
@@ -37,6 +39,14 @@ namespace RMDataManager.Controllers
             
             saleData.SaveSale(saleDetailModels, RequestContext.Principal.Identity.GetUserId());
             return Ok();
+        }
+        // GET api/Sales/SalesReport
+        [HttpGet]
+        [Route("SalesReport")]
+        public List<SaleReportModel> GetSaleReport()
+        {
+            SaleData sale = new SaleData();
+            return sale.GetSaleReport();
         }
     }
 }

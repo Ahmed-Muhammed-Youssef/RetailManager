@@ -24,7 +24,6 @@ namespace RMDataManager.Library.DataAccess
                 item.PurchasePrice = productInfo.RetailPrice * item.Quantity;
                 item.Tax = (item.PurchasePrice * ((decimal)productInfo.TaxPercentage/100));
             }
-
             //create sale  model
             SaleModel saleModel = new SaleModel
             {
@@ -34,9 +33,7 @@ namespace RMDataManager.Library.DataAccess
               
             };
             saleModel.Total = saleModel.SubTotal + saleModel.Tax;
-
             //save sale  model
-
             using (SqlDataAccess sqlDataAccess = new SqlDataAccess()) 
             {
                 try
@@ -64,8 +61,11 @@ namespace RMDataManager.Library.DataAccess
                     throw;
                 }
             }
-
-
+        }
+        public List<SaleReportModel> GetSaleReport()
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+            return sqlDataAccess.LoadData<SaleReportModel>("dbo.spSaleReport", new { }, "RMData");
         }
     }
 }
