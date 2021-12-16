@@ -21,7 +21,7 @@ namespace RMDataManager.Controllers
         {
             string id = RequestContext.Principal.Identity.GetUserId();
             UserData userData = new UserData();
-            
+
             return userData.GetUserById(id).First();
         }
         [Authorize(Roles = "Admin")]
@@ -62,6 +62,56 @@ namespace RMDataManager.Controllers
             }
 
             return toDisplayUserModels;
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("admin/roles")]
+        public Dictionary<string, string> GetAllRoles()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Roles.ToDictionary(x => x.Id, x => x.Name);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("admin/role/add")]
+        public IHttpActionResult AddRole(UserRolePairModel userRolePair)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            using (var context = new ApplicationDbContext())
+            {
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new UserManager<ApplicationUser>(userStore);
+
+                userManager.AddToRole(userRolePair.UserId, userRolePair.RoleName);
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("admin/role/remove")]
+        public IHttpActionResult RemoveRole(UserRolePairModel userRolePair)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            using (var context = new ApplicationDbContext())
+            {
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new UserManager<ApplicationUser>(userStore);
+
+                userManager.RemoveFromRole(userRolePair.UserId, userRolePair.RoleName);
+            }
+            return Ok();
         }
     }
 }
