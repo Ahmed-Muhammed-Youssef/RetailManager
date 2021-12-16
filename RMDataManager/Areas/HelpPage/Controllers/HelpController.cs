@@ -1,8 +1,8 @@
+using RMDataManager.Areas.HelpPage.ModelDescriptions;
+using RMDataManager.Areas.HelpPage.Models;
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using RMDataManager.Areas.HelpPage.ModelDescriptions;
-using RMDataManager.Areas.HelpPage.Models;
 
 namespace RMDataManager.Areas.HelpPage.Controllers
 {

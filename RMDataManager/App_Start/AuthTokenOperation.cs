@@ -1,8 +1,5 @@
 ﻿using Swashbuckle.Swagger;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http.Description;
 
 namespace RMDataManager.App_Start
@@ -20,10 +17,10 @@ namespace RMDataManager.App_Start
                     {
                         "application/x-www-form-urlencoded"
                     },
-                    parameters = new List<Parameter> { 
+                    parameters = new List<Parameter> {
                         new Parameter
                         {
-                            type = "string", 
+                            type = "string",
                             name = "grant_type",
                             required = true,
                             @in = "formData",

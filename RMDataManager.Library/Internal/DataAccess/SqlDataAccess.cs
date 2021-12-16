@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RMDataManager.Library
 {
@@ -19,17 +16,17 @@ namespace RMDataManager.Library
         public List<T> LoadData<T>(string storedProcedure, object parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
-            using(IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 return connection
                     .Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure)
                     .AsList();
             }
-        } 
+        }
         public void SaveData(string storedProcedure, object parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
-            using(IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 connection.Execute(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
             }
@@ -51,8 +48,8 @@ namespace RMDataManager.Library
 
         public void SaveDataInTransaction(string storedProcedure, object parameters)
         {
-                _connection.Execute(storedProcedure, parameters,
-                    commandType: CommandType.StoredProcedure, transaction: _transaction);
+            _connection.Execute(storedProcedure, parameters,
+                commandType: CommandType.StoredProcedure, transaction: _transaction);
         }
         public List<T> LoadDataInTransaction<T>(string storedProcedure, object parameters)
         {

@@ -2,11 +2,7 @@
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using RMDataManager.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace RMDataManager.Controllers
@@ -16,7 +12,7 @@ namespace RMDataManager.Controllers
     public class SaleController : ApiController
     {
         // POST api/Sales
-        [Authorize(Roles ="Cashier")]
+        [Authorize(Roles = "Cashier")]
         [HttpPost]
         public IHttpActionResult Post(IEnumerable<SaleModelReceived> salelModelsReceived)
         {
@@ -34,10 +30,10 @@ namespace RMDataManager.Controllers
                 };
                 saleDetailModels.Add(saleModelDetail);
             }
-            
+
             SaleData saleData = new SaleData();
 
-            
+
             saleData.SaveSale(saleDetailModels, RequestContext.Principal.Identity.GetUserId());
             return Ok();
         }

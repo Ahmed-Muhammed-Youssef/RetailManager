@@ -16,13 +16,13 @@ namespace RMDataManager.Library.DataAccess
             {
                 var productInfo = product.GetProductById(item.ProductId);
 
-                if(productInfo == null)
+                if (productInfo == null)
                 {
                     throw new Exception($"The product {item.ProductId} cannot be found");
                 }
 
                 item.PurchasePrice = productInfo.RetailPrice * item.Quantity;
-                item.Tax = (item.PurchasePrice * ((decimal)productInfo.TaxPercentage/100));
+                item.Tax = (item.PurchasePrice * ((decimal)productInfo.TaxPercentage / 100));
             }
             //create sale  model
             SaleModel saleModel = new SaleModel
@@ -30,16 +30,16 @@ namespace RMDataManager.Library.DataAccess
                 SubTotal = saleDetailModels.Sum(x => x.PurchasePrice),
                 Tax = saleDetailModels.Sum(x => x.Tax),
                 CashierId = cashierId
-              
+
             };
             saleModel.Total = saleModel.SubTotal + saleModel.Tax;
             //save sale  model
-            using (SqlDataAccess sqlDataAccess = new SqlDataAccess()) 
+            using (SqlDataAccess sqlDataAccess = new SqlDataAccess())
             {
                 try
                 {
                     sqlDataAccess.OpenTransaction("RMData");
-                
+
                     sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Id, saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
 
                     //Get The ID From the sale model
@@ -51,7 +51,7 @@ namespace RMDataManager.Library.DataAccess
                     foreach (var item in saleDetailModels)
                     {
                         item.SaleId = saleModel.Id;
-                        sqlDataAccess.SaveDataInTransaction("dbo.spSalesDetailsInsert", 
+                        sqlDataAccess.SaveDataInTransaction("dbo.spSalesDetailsInsert",
                             new { item.SaleId, item.ProductId, item.Quantity, item.PurchasePrice, item.Tax });
                     }
                 }
