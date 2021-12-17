@@ -1,9 +1,7 @@
 ﻿using DataManager.Data;
 using DataManager.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using RMDataManager.Library.DataAccess.Internal.DataAccess;
 using RMDataManager.Library.Models;
@@ -43,11 +41,11 @@ namespace DataManager.API
         public ActionResult<List<ToDisplayUserModel>> GetAllUsers()
         {
             List<ToDisplayUserModel> toDisplayUserModels = new List<ToDisplayUserModel>();
-           
+
             var users = applicationDbContext.Users.ToList();
             var roles = applicationDbContext.Roles.ToList();
             var userRoles = applicationDbContext.UserRoles.ToList();
-            
+
             foreach (var user in users)
             {
                 var userToDisplay = new ToDisplayUserModel()
@@ -58,13 +56,13 @@ namespace DataManager.API
                 //To get the role name corresponding to the role id
                 foreach (var userRole in userRoles)
                 {
-                    if(user.Id  == userRole.UserId)
+                    if (user.Id == userRole.UserId)
                     {
                         userToDisplay.Roles.Add(userRole.RoleId, roles.Find(r => r.Id == userRole.RoleId).Name);
                     }
                 }
                 toDisplayUserModels.Add(userToDisplay);
-                
+
             }
             return Ok(toDisplayUserModels);
         }
@@ -80,7 +78,7 @@ namespace DataManager.API
                 return BadRequest(ModelState);
             }
 
-            
+
             await userManager.AddToRoleAsync(await userManager.FindByIdAsync(userRolePair.UserId), userRolePair.RoleName);
             return CreatedAtAction(nameof(AddRole), userRolePair);
         }
