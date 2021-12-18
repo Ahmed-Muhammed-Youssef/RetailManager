@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -14,7 +13,7 @@ namespace RMDataManager.Library
         {
             this.configuration = configuration;
         }
-        
+
         public string GetConnectionString(string name)
         {
             return configuration.GetConnectionString(name);

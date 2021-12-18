@@ -22,7 +22,7 @@ namespace DataManager.API
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
 
-        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager,  IConfiguration configuration)
+        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             this.applicationDbContext = applicationDbContext;
             this.userManager = userManager;
