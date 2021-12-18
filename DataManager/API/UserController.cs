@@ -3,6 +3,7 @@ using DataManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using RMDataManager.Library.DataAccess.Internal.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
@@ -19,11 +20,13 @@ namespace DataManager.API
     {
         private readonly ApplicationDbContext applicationDbContext;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IConfiguration configuration;
 
-        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager,  IConfiguration configuration)
         {
             this.applicationDbContext = applicationDbContext;
             this.userManager = userManager;
+            this.configuration = configuration;
         }
         // GET: User/Id/
         [HttpGet]
@@ -31,7 +34,7 @@ namespace DataManager.API
         public ActionResult<UserModel> GetUser()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserData userData = new UserData();
+            UserData userData = new UserData(configuration);
 
             return Ok(userData.GetUserById(id).First());
         }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,9 +10,14 @@ namespace RMDataManager.Library
 {
     internal class SqlDataAccess : IDisposable
     {
+        public SqlDataAccess(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+        
         public string GetConnectionString(string name)
         {
-            return ConfigurationManager.ConnectionStrings[name].ConnectionString;
+            return configuration.GetConnectionString(name);
         }
         public List<T> LoadData<T>(string storedProcedure, object parameters, string connectionStringName)
         {
@@ -35,6 +41,8 @@ namespace RMDataManager.Library
         private IDbConnection _connection;
         private IDbTransaction _transaction;
         private bool isClosed = false;
+        private readonly IConfiguration configuration;
+
         public void OpenTransaction(string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);

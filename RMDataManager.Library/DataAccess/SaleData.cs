@@ -1,4 +1,5 @@
-﻿using RMDataManager.Library.Models;
+﻿using Microsoft.Extensions.Configuration;
+using RMDataManager.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,18 @@ namespace RMDataManager.Library.DataAccess
 {
     public class SaleData
     {
+        private readonly SqlDataAccess sqlDataAccess;
+        private readonly IConfiguration configuration;
+
+        public SaleData(IConfiguration configuration)
+        {
+            sqlDataAccess = new SqlDataAccess(configuration);
+            this.configuration = configuration;
+        }
         public void SaveSale(List<SaleDetailModel> saleDetailModels, string cashierId)
         {
             //@TODO: needs modifications
-            ProductData product = new ProductData();
+            ProductData product = new ProductData(configuration);
 
             foreach (var item in saleDetailModels)
             {
@@ -34,7 +43,7 @@ namespace RMDataManager.Library.DataAccess
             };
             saleModel.Total = saleModel.SubTotal + saleModel.Tax;
             //save sale  model
-            using (SqlDataAccess sqlDataAccess = new SqlDataAccess())
+            using (sqlDataAccess)
             {
                 try
                 {
@@ -64,7 +73,6 @@ namespace RMDataManager.Library.DataAccess
         }
         public List<SaleReportModel> GetSaleReport()
         {
-            SqlDataAccess sqlDataAccess = new SqlDataAccess();
             return sqlDataAccess.LoadData<SaleReportModel>("dbo.spSaleReport", new { }, "RMData");
         }
     }
