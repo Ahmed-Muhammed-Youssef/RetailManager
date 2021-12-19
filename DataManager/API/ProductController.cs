@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
@@ -12,11 +11,11 @@ namespace DataManager.API
     [Authorize(Roles = "Cashier")]
     public class ProductController : ControllerBase
     {
-        private readonly IConfiguration configuration;
+        private readonly IProductData productData;
 
-        public ProductController(IConfiguration configuration)
+        public ProductController(IProductData productData)
         {
-            this.configuration = configuration;
+            this.productData = productData;
         }
         // GET: Products/
 
@@ -24,7 +23,7 @@ namespace DataManager.API
         [Route("get/all")]
         public ActionResult<List<ProductModel>> GetAll()
         {
-            ProductData productData = new ProductData(configuration);
+
             return Ok(productData.GetAllProducts());
         }
     }

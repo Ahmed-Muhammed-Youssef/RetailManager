@@ -1,29 +1,26 @@
-﻿using Microsoft.Extensions.Configuration;
-using RMDataManager.Library.Models;
+﻿using RMDataManager.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RMDataManager.Library.DataAccess
 {
-    public class SaleData
+    public class SaleData : ISaleData
     {
-        private readonly SqlDataAccess sqlDataAccess;
-        private readonly IConfiguration configuration;
+        private readonly ISqlDataAccess sqlDataAccess;
+        private readonly IProductData productData;
 
-        public SaleData(IConfiguration configuration)
+        public SaleData(ISqlDataAccess sqlDataAccess, IProductData productData)
         {
-            sqlDataAccess = new SqlDataAccess(configuration);
-            this.configuration = configuration;
+            this.sqlDataAccess = sqlDataAccess;
+            this.productData = productData;
         }
         public void SaveSale(List<SaleDetailModel> saleDetailModels, string cashierId)
         {
             //@TODO: needs modifications
-            ProductData product = new ProductData(configuration);
-
             foreach (var item in saleDetailModels)
             {
-                var productInfo = product.GetProductById(item.ProductId);
+                var productInfo = productData.GetProductById(item.ProductId);
 
                 if (productInfo == null)
                 {
@@ -43,33 +40,33 @@ namespace RMDataManager.Library.DataAccess
             };
             saleModel.Total = saleModel.SubTotal + saleModel.Tax;
             //save sale  model
-            using (sqlDataAccess)
+
+            try
             {
-                try
+                sqlDataAccess.OpenTransaction("RMData");
+
+                sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Id, saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
+
+                //Get The ID From the sale model
+                saleModel.Id = sqlDataAccess.LoadDataInTransaction<int>("dbo.spSalesLookup",
+                    new { saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total })
+                    .FirstOrDefault();
+
+                //save  the  sale detail models
+                foreach (var item in saleDetailModels)
                 {
-                    sqlDataAccess.OpenTransaction("RMData");
-
-                    sqlDataAccess.SaveDataInTransaction("dbo.spSalesInsert", new { saleModel.Id, saleModel.Total, saleModel.SubTotal, saleModel.SaleDate, saleModel.CashierId, saleModel.Tax });
-
-                    //Get The ID From the sale model
-                    saleModel.Id = sqlDataAccess.LoadDataInTransaction<int>("dbo.spSalesLookup",
-                        new { saleModel.CashierId, saleModel.SaleDate, saleModel.SubTotal, saleModel.Tax, saleModel.Total })
-                        .FirstOrDefault();
-
-                    //save  the  sale detail models
-                    foreach (var item in saleDetailModels)
-                    {
-                        item.SaleId = saleModel.Id;
-                        sqlDataAccess.SaveDataInTransaction("dbo.spSalesDetailsInsert",
-                            new { item.SaleId, item.ProductId, item.Quantity, item.PurchasePrice, item.Tax });
-                    }
-                }
-                catch
-                {
-                    sqlDataAccess.RollbackTransasction();
-                    throw;
+                    item.SaleId = saleModel.Id;
+                    sqlDataAccess.SaveDataInTransaction("dbo.spSalesDetailsInsert",
+                        new { item.SaleId, item.ProductId, item.Quantity, item.PurchasePrice, item.Tax });
                 }
             }
+            catch
+            {
+                sqlDataAccess.RollbackTransasction();
+                throw;
+            }
+
+            sqlDataAccess.Dispose();
         }
         public List<SaleReportModel> GetSaleReport()
         {

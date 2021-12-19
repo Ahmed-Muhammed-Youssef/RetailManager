@@ -1,7 +1,6 @@
 ﻿using DataManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
@@ -14,11 +13,11 @@ namespace DataManager.API
     [Authorize]
     public class SaleController : ControllerBase
     {
-        private readonly IConfiguration configuration;
+        private readonly ISaleData saleData;
 
-        public SaleController(IConfiguration configuration)
+        public SaleController(ISaleData saleData)
         {
-            this.configuration = configuration;
+            this.saleData = saleData;
         }
         // POST api/Sales
         [Authorize(Roles = "Cashier")]
@@ -39,10 +38,6 @@ namespace DataManager.API
                 };
                 saleDetailModels.Add(saleModelDetail);
             }
-
-            SaleData saleData = new SaleData(configuration);
-
-
             saleData.SaveSale(saleDetailModels, User.FindFirstValue(ClaimTypes.NameIdentifier));
             return CreatedAtAction(nameof(Post), salelModelsReceived);
         }
@@ -52,8 +47,7 @@ namespace DataManager.API
         [Route("SalesReport")]
         public ActionResult<List<SaleReportModel>> GetSaleReport()
         {
-            SaleData sale = new SaleData(configuration);
-            return Ok(sale.GetSaleReport());
+            return Ok(saleData.GetSaleReport());
         }
     }
 }

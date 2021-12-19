@@ -1,15 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using RMDataManager.Library.Models;
+﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
 
 namespace RMDataManager.Library.DataAccess
 {
-    public class InventoryData
+    public class InventoryData : IInventoryData
     {
-        private readonly SqlDataAccess sqlDataAccess;
-        public InventoryData(IConfiguration configuration)
+        private readonly ISqlDataAccess sqlDataAccess;
+
+        public InventoryData(ISqlDataAccess sqlDataAccess)
         {
-            sqlDataAccess = new SqlDataAccess(configuration);
+            this.sqlDataAccess = sqlDataAccess;
         }
         public List<InventoryModel> GetInventory()
         {

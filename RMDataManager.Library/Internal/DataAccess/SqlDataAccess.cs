@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace RMDataManager.Library
 {
-    internal class SqlDataAccess : IDisposable
+    public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
         public SqlDataAccess(IConfiguration configuration)
         {

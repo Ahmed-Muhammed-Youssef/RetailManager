@@ -1,15 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using RMDataManager.Library.Models;
+﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
 
-namespace RMDataManager.Library.DataAccess.Internal.DataAccess
+namespace RMDataManager.Library.DataAccess
 {
-    public class UserData
+    public class UserData : IUserData
     {
-        private readonly SqlDataAccess sqlDataAccess;
-        public UserData(IConfiguration configuration)
+        private readonly ISqlDataAccess sqlDataAccess;
+
+        public UserData(ISqlDataAccess sqlDataAccess)
         {
-            sqlDataAccess = new SqlDataAccess(configuration);
+            this.sqlDataAccess = sqlDataAccess;
         }
         public List<UserModel> GetUserById(string id)
         {

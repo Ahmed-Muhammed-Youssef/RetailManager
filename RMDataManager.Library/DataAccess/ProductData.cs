@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Configuration;
-using RMDataManager.Library.Models;
+﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RMDataManager.Library.DataAccess
 {
-    public class ProductData
+    public class ProductData : IProductData
     {
-        private SqlDataAccess sqlDataAccess;
-        public ProductData(IConfiguration configuration)
+        private readonly ISqlDataAccess sqlDataAccess;
+
+        public ProductData(ISqlDataAccess sqlDataAccess)
         {
-            sqlDataAccess = new SqlDataAccess(configuration);
+            this.sqlDataAccess = sqlDataAccess;
         }
         public List<ProductModel> GetAllProducts()
         {

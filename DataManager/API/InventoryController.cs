@@ -12,20 +12,20 @@ namespace DataManager.API
     [Authorize]
     public class InventoryController : ControllerBase
     {
-        private readonly IConfiguration configuration;
-
-        public InventoryController(IConfiguration configuration)
+        private readonly IInventoryData inventoryData;
+        public InventoryController(IInventoryData inventoryData)
         {
-            this.configuration = configuration;
+            this.inventoryData = inventoryData;
         }
+
         [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("get/all")]
         public ActionResult<List<InventoryModel>> Get()
         {
-            InventoryData inventoryData = new InventoryData(configuration);
             return Ok(inventoryData.GetInventory());
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("add")]
@@ -35,7 +35,6 @@ namespace DataManager.API
             {
                 return BadRequest(ModelState);
             }
-            InventoryData inventoryData = new InventoryData(configuration);
             inventoryData.SaveInventoryRecord(item);
             return CreatedAtAction(nameof(Post), item);
         }

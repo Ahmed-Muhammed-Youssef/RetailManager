@@ -3,8 +3,7 @@ using DataManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using RMDataManager.Library.DataAccess.Internal.DataAccess;
+using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +19,12 @@ namespace DataManager.API
     {
         private readonly ApplicationDbContext applicationDbContext;
         private readonly UserManager<IdentityUser> userManager;
-        private readonly IConfiguration configuration;
-
-        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager, IConfiguration configuration)
+        private readonly IUserData userData;
+        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager, IUserData userData)
         {
             this.applicationDbContext = applicationDbContext;
             this.userManager = userManager;
-            this.configuration = configuration;
+            this.userData = userData;
         }
         // GET: User/Id/
         [HttpGet]
@@ -34,8 +32,6 @@ namespace DataManager.API
         public ActionResult<UserModel> GetUser()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserData userData = new UserData(configuration);
-
             return Ok(userData.GetUserById(id).First());
         }
         [Authorize(Roles = "Admin")]
@@ -70,7 +66,6 @@ namespace DataManager.API
             return Ok(toDisplayUserModels);
         }
 
-        //[Authorize(Roles = "Admin")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("add/role")]
