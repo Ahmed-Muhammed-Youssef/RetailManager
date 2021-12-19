@@ -3,6 +3,7 @@ using DataManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
@@ -20,11 +21,15 @@ namespace DataManager.API
         private readonly ApplicationDbContext applicationDbContext;
         private readonly UserManager<IdentityUser> userManager;
         private readonly IUserData userData;
-        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager, IUserData userData)
+        private readonly ILogger<UserController> logger;
+
+        public UserController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager,
+            IUserData userData, ILogger<UserController> logger)
         {
             this.applicationDbContext = applicationDbContext;
             this.userManager = userManager;
             this.userData = userData;
+            this.logger = logger;
         }
         // GET: User/Id/
         [HttpGet]
@@ -75,7 +80,10 @@ namespace DataManager.API
             {
                 return BadRequest(ModelState);
             }
-
+            string loggedinUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            logger.LogInformation("Admin {Admin} added user {User} to role {Role}", loggedinUserId,
+                userRolePair.UserId, userRolePair.RoleName);
 
             await userManager.AddToRoleAsync(await userManager.FindByIdAsync(userRolePair.UserId), userRolePair.RoleName);
             return CreatedAtAction(nameof(AddRole), userRolePair);
@@ -90,6 +98,11 @@ namespace DataManager.API
             {
                 return BadRequest(ModelState);
             }
+            string loggedinUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            logger.LogInformation("Admin {Admin} removed user {User} from role {Role}", loggedinUserId,
+                userRolePair.UserId, userRolePair.RoleName);
+
             await userManager.RemoveFromRoleAsync(await userManager.FindByIdAsync(userRolePair.UserId), userRolePair.RoleName);
             return Ok(userRolePair);
         }
