@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataManager.API
 {
@@ -21,21 +22,21 @@ namespace DataManager.API
         [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("get/all")]
-        public ActionResult<List<InventoryModel>> Get()
+        public async Task<ActionResult<List<InventoryModel>>> Get()
         {
-            return Ok(inventoryData.GetInventory());
+            return Ok(await inventoryData.GetInventory());
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("add")]
-        public IActionResult Post(InventoryModel item)
+        public async Task<IActionResult> Post(InventoryModel item)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            inventoryData.SaveInventoryRecord(item);
+            await inventoryData.SaveInventoryRecord(item);
             return CreatedAtAction(nameof(Post), item);
         }
     }

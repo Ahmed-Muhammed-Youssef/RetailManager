@@ -1,6 +1,7 @@
 ﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library.DataAccess
 {
@@ -12,13 +13,14 @@ namespace RMDataManager.Library.DataAccess
         {
             this.sqlDataAccess = sqlDataAccess;
         }
-        public List<ProductModel> GetAllProducts()
+        public async Task<List<ProductModel>> GetAllProducts()
         {
-            return sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetAll", new { }, "RMData");
+            return await sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetAll", new { }, "RMData");
         }
-        public ProductModel GetProductById(int id)
+        public async Task<ProductModel> GetProductById(int id)
         {
-            return sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetById", new { Id = id }, "RMData").FirstOrDefault();
+            var query = await sqlDataAccess.LoadData<ProductModel>("dbo.spProductsGetById", new { Id = id }, "RMData");
+            return query.FirstOrDefault();
         }
     }
 }

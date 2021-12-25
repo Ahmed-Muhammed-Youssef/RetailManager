@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library
 {
@@ -7,11 +8,11 @@ namespace RMDataManager.Library
         void CommitTransaction();
         void Dispose();
         string GetConnectionString(string name);
-        List<T> LoadData<T>(string storedProcedure, object parameters, string connectionStringName);
-        List<T> LoadDataInTransaction<T>(string storedProcedure, object parameters);
+        Task<List<T>> LoadData<T>(string storedProcedure, object parameters, string connectionStringName);
+        Task<List<T>> LoadDataInTransaction<T>(string storedProcedure, object parameters);
         void OpenTransaction(string connectionStringName);
         void RollbackTransasction();
-        void SaveData(string storedProcedure, object parameters, string connectionStringName);
-        void SaveDataInTransaction(string storedProcedure, object parameters);
+        Task<int> SaveData(string storedProcedure, object parameters, string connectionStringName);
+        Task<int> SaveDataInTransaction(string storedProcedure, object parameters);
     }
 }

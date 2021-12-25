@@ -1,11 +1,12 @@
 ﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library.DataAccess
 {
     public interface IProductData
     {
-        List<ProductModel> GetAllProducts();
-        ProductModel GetProductById(int id);
+        Task<List<ProductModel>> GetAllProducts();
+        Task<ProductModel> GetProductById(int id);
     }
 }

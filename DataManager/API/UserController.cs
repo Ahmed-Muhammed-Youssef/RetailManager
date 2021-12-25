@@ -34,10 +34,11 @@ namespace DataManager.API
         // GET: User/Id/
         [HttpGet]
         [Route("id")]
-        public ActionResult<UserModel> GetUser()
+        public async Task<ActionResult<UserModel>> GetUser()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(userData.GetUserById(id).First());
+            var query = await userData.GetUserById(id);
+            return Ok(query.First());
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]

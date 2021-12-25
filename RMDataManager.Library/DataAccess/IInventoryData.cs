@@ -1,11 +1,12 @@
 ﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library.DataAccess
 {
     public interface IInventoryData
     {
-        List<InventoryModel> GetInventory();
-        void SaveInventoryRecord(InventoryModel inventory);
+        Task<List<InventoryModel>> GetInventory();
+        Task<int> SaveInventoryRecord(InventoryModel inventory);
     }
 }

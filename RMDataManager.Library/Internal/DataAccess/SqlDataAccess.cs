@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library
 {
@@ -20,23 +21,25 @@ namespace RMDataManager.Library
         {
             return configuration.GetConnectionString(name);
         }
-        public List<T> LoadData<T>(string storedProcedure, object parameters, string connectionStringName)
+        public async Task<List<T>> LoadData<T>(string storedProcedure, object parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                return connection
-                    .Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure)
-                    .AsList();
+                var query = await connection
+                    .QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+                return query.AsList();
             }
         }
-        public void SaveData(string storedProcedure, object parameters, string connectionStringName)
+        public async Task<int> SaveData(string storedProcedure, object parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
+            int rowsAffected;
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                connection.Execute(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+                rowsAffected = await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
             }
+            return rowsAffected;
         }
 
         private IDbConnection _connection;
@@ -56,17 +59,18 @@ namespace RMDataManager.Library
 
         }
 
-        public void SaveDataInTransaction(string storedProcedure, object parameters)
+        public async Task<int> SaveDataInTransaction(string storedProcedure, object parameters)
         {
-            _connection.Execute(storedProcedure, parameters,
+            return await _connection.ExecuteAsync(storedProcedure, parameters,
                 commandType: CommandType.StoredProcedure, transaction: _transaction);
+            
         }
-        public List<T> LoadDataInTransaction<T>(string storedProcedure, object parameters)
+        public async Task<List<T>> LoadDataInTransaction<T>(string storedProcedure, object parameters)
         {
-            return _connection
-                  .Query<T>(storedProcedure, parameters,
-                  commandType: CommandType.StoredProcedure, transaction: _transaction)
-                  .AsList();
+            var query = await _connection
+                  .QueryAsync<T>(storedProcedure, parameters,
+                  commandType: CommandType.StoredProcedure, transaction: _transaction);
+            return query.AsList();
         }
         public void CommitTransaction()
         {

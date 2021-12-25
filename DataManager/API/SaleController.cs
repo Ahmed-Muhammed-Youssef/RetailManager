@@ -5,6 +5,7 @@ using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace DataManager.API
 {
@@ -22,7 +23,7 @@ namespace DataManager.API
         // POST api/Sales
         [Authorize(Roles = "Cashier")]
         [HttpPost]
-        public IActionResult Post(IEnumerable<SaleModelReceived> salelModelsReceived)
+        public async Task<IActionResult> Post(IEnumerable<SaleModelReceived> salelModelsReceived)
         {
             if (!ModelState.IsValid)
             {
@@ -38,16 +39,16 @@ namespace DataManager.API
                 };
                 saleDetailModels.Add(saleModelDetail);
             }
-            saleData.SaveSale(saleDetailModels, User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await saleData.SaveSale(saleDetailModels, User.FindFirstValue(ClaimTypes.NameIdentifier));
             return CreatedAtAction(nameof(Post), salelModelsReceived);
         }
         // GET api/Sales/SalesReport
         [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("SalesReport")]
-        public ActionResult<List<SaleReportModel>> GetSaleReport()
+        public async Task<ActionResult<List<SaleReportModel>>> GetSaleReport()
         {
-            return Ok(saleData.GetSaleReport());
+            return Ok(await saleData.GetSaleReport());
         }
     }
 }

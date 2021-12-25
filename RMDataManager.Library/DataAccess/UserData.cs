@@ -1,5 +1,6 @@
 ﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library.DataAccess
 {
@@ -11,9 +12,9 @@ namespace RMDataManager.Library.DataAccess
         {
             this.sqlDataAccess = sqlDataAccess;
         }
-        public List<UserModel> GetUserById(string id)
+        public async Task<List<UserModel>> GetUserById(string id)
         {
-            return sqlDataAccess.LoadData<UserModel>("dbo.spUserLookup", new { Id = id }, "RMData");
+            return await sqlDataAccess.LoadData<UserModel>("dbo.spUserLookup", new { Id = id }, "RMData");
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RMDataManager.Library.DataAccess;
 using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataManager.API
 {
@@ -21,10 +22,10 @@ namespace DataManager.API
 
         [HttpGet]
         [Route("get/all")]
-        public ActionResult<List<ProductModel>> GetAll()
+        public async Task<ActionResult<List<ProductModel>>> GetAll()
         {
 
-            return Ok(productData.GetAllProducts());
+            return Ok(await productData.GetAllProducts());
         }
     }
 }

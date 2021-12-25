@@ -1,5 +1,6 @@
 ﻿using RMDataManager.Library.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMDataManager.Library.DataAccess
 {
@@ -11,13 +12,13 @@ namespace RMDataManager.Library.DataAccess
         {
             this.sqlDataAccess = sqlDataAccess;
         }
-        public List<InventoryModel> GetInventory()
+        public async Task<List<InventoryModel>> GetInventory()
         {
-            return sqlDataAccess.LoadData<InventoryModel>("dbo.spInventoryGetAll", new { }, "RMData");
+            return await sqlDataAccess.LoadData<InventoryModel>("dbo.spInventoryGetAll", new { }, "RMData");
         }
-        public void SaveInventoryRecord(InventoryModel inventory)
+        public async Task<int> SaveInventoryRecord(InventoryModel inventory)
         {
-            sqlDataAccess.SaveData("dbo.spInventoryInsert", inventory, "RMData");
+            return await sqlDataAccess.SaveData("dbo.spInventoryInsert", inventory, "RMData");
         }
     }
 }
