@@ -32,7 +32,12 @@ namespace DataManager
             services.AddMvc();
             
             // Inject the default Authentication scheme of identity framework
-            services.AddAuthentication();
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration["Google:ClientId"];
+                    options.ClientSecret = Configuration["Google:ClientSecret"];
+                });
 
             // Inject the EF database context of the authentication database
             services.AddDbContext<ApplicationDbContext>(options =>
