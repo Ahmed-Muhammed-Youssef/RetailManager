@@ -149,7 +149,7 @@ namespace DataManager.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("DataManager"),
+                _urlEncoder.Encode("RetailManager"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }
