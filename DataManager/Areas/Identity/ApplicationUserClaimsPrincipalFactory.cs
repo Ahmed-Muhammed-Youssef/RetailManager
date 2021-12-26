@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataManager.Areas.Identity
 {
-    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<RetailUser>
+    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<RetailUser, IdentityRole>
     {
-        public ApplicationUserClaimsPrincipalFactory(UserManager<RetailUser> userManager, IOptions<IdentityOptions> optionsAccessor) : base(userManager, optionsAccessor)
+        public ApplicationUserClaimsPrincipalFactory(UserManager<RetailUser> userManager, IOptions<IdentityOptions> optionsAccessor, RoleManager<IdentityRole> roleManager) : base(userManager, roleManager, optionsAccessor )
         {
         }
         protected override async Task<ClaimsIdentity> GenerateClaimsAsync(RetailUser user)

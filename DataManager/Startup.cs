@@ -33,8 +33,9 @@ namespace DataManager
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<RetailUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole>()
+            services.AddIdentity<RetailUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultUI()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<IUserClaimsPrincipalFactory<RetailUser>, ApplicationUserClaimsPrincipalFactory>();  
             services.AddRazorPages();
