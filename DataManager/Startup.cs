@@ -1,3 +1,4 @@
+using DataManager.Areas.Identity;
 using DataManager.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace DataManager
             services.AddDefaultIdentity<RetailUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddScoped<IUserClaimsPrincipalFactory<RetailUser>, ApplicationUserClaimsPrincipalFactory>();  
             services.AddRazorPages();
             // Data Access Services
 
